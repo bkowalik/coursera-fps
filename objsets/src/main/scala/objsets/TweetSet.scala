@@ -154,7 +154,15 @@ class NonEmpty(elem: Tweet, left: TweetSet, right: TweetSet) extends TweetSet {
    * Question: Should we implment this method here, or should it remain abstract
    * and be implemented in the subclasses?
    */
-  override def union(that: TweetSet): TweetSet = ???
+  override def union(that: TweetSet): TweetSet = {
+    val rightUn = right.union(that)
+    val leftUn = left.union(rightUn)
+    if(leftUn.contains(elem)) {
+      leftUn
+    } else {
+      leftUn.incl(elem)
+    }
+  }
 
   /**
    * The following methods are already implemented
