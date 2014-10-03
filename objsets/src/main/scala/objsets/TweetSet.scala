@@ -66,7 +66,7 @@ abstract class TweetSet {
    * Question: Should we implment this method here, or should it remain abstract
    * and be implemented in the subclasses?
    */
-  def mostRetweeted: Tweet = ???
+  def mostRetweeted: Tweet
 
   /**
    * Returns a list containing all tweets of this set, sorted by retweet count
@@ -77,7 +77,7 @@ abstract class TweetSet {
    * Question: Should we implment this method here, or should it remain abstract
    * and be implemented in the subclasses?
    */
-  def descendingByRetweet: TweetList = ???
+  def descendingByRetweet: TweetList
 
 
   /**
@@ -112,13 +112,19 @@ class Empty extends TweetSet {
 
   def filterAcc(p: Tweet => Boolean, acc: TweetSet): TweetSet = new Empty
 
-
   /**
-   * Returns a new `TweetSet` that is the union of `TweetSet`s `this` and `that`.
+   * Returns a list containing all tweets of this set, sorted by retweet count
+   * in descending order. In other words, the head of the resulting list should
+   * have the highest retweet count.
    *
+   * Hint: the method `remove` on TweetSet will be very useful.
    * Question: Should we implment this method here, or should it remain abstract
    * and be implemented in the subclasses?
    */
+  override def descendingByRetweet: TweetList = ???
+
+  override def mostRetweeted: Tweet = throw new NoSuchElementException
+
   override def union(that: TweetSet): TweetSet = that
 
   /**
@@ -147,13 +153,14 @@ class NonEmpty(elem: Tweet, left: TweetSet, right: TweetSet) extends TweetSet {
     }
   }
 
+  override def mostRetweeted: Tweet = {
+    if(this == union(this)) {
+      elem
+    } else {
+      filter(_.retweets > elem.retweets).mostRetweeted
+    }
+  }
 
-  /**
-   * Returns a new `TweetSet` that is the union of `TweetSet`s `this` and `that`.
-   *
-   * Question: Should we implment this method here, or should it remain abstract
-   * and be implemented in the subclasses?
-   */
   override def union(that: TweetSet): TweetSet = {
     val rightUn = right.union(that)
     val leftUn = left.union(rightUn)
