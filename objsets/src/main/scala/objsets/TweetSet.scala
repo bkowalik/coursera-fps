@@ -121,7 +121,7 @@ class Empty extends TweetSet {
    * Question: Should we implment this method here, or should it remain abstract
    * and be implemented in the subclasses?
    */
-  override def descendingByRetweet: TweetList = ???
+  override def descendingByRetweet: TweetList = Nil
 
   override def mostRetweeted: Tweet = throw new NoSuchElementException
 
@@ -151,6 +151,12 @@ class NonEmpty(elem: Tweet, left: TweetSet, right: TweetSet) extends TweetSet {
     } else {
       rightAcc
     }
+  }
+
+  override def descendingByRetweet: TweetList = {
+    val most = mostRetweeted
+    val rest = remove(most)
+    new Cons(most, rest.descendingByRetweet)
   }
 
   override def mostRetweeted: Tweet = {
