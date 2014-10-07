@@ -110,7 +110,7 @@ abstract class TweetSet {
 
 class Empty extends TweetSet {
 
-  def filterAcc(p: Tweet => Boolean, acc: TweetSet): TweetSet = new Empty
+  def filterAcc(p: Tweet => Boolean, acc: TweetSet): TweetSet = acc
 
   /**
    * Returns a list containing all tweets of this set, sorted by retweet count
@@ -143,14 +143,14 @@ class Empty extends TweetSet {
 class NonEmpty(elem: Tweet, left: TweetSet, right: TweetSet) extends TweetSet {
 
   def filterAcc(p: Tweet => Boolean, acc: TweetSet): TweetSet = {
-    val leftAcc = left.filterAcc(p, acc)
-    val rightAcc = right.filterAcc(p, leftAcc)
-
-    if(p(elem)) {
-      rightAcc.incl(elem)
+    val newAcc = if(p(elem)) {
+      acc.incl(elem)
     } else {
-      rightAcc
+      acc
     }
+
+    val leftAcc = left.filterAcc(p, newAcc)
+    right.filterAcc(p, leftAcc)
   }
 
   override def descendingByRetweet: TweetList = {
@@ -160,10 +160,12 @@ class NonEmpty(elem: Tweet, left: TweetSet, right: TweetSet) extends TweetSet {
   }
 
   override def mostRetweeted: Tweet = {
-    if(this == union(this)) {
+    val filtered = filter(_.retweets > elem.retweets)
+    val sample = new Empty
+    if(sample == filtered.union(sample)) {
       elem
     } else {
-      filter(_.retweets > elem.retweets).mostRetweeted
+      filtered.mostRetweeted
     }
   }
 
