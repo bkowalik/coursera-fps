@@ -176,8 +176,8 @@ object Huffman {
         }
       } else {
         currRoot match {
-          case Fork(left, right, _, _) => if (bits.head == 0) helper(left, bits.tail, acc) else helper(right, bits.tail, acc)
           case Leaf(c, _) => acc :+ c
+          case _ => throw new IllegalStateException()
         }
       }
     }
@@ -194,7 +194,7 @@ object Huffman {
 
   /**
    * What does the secret message say? Can you decode it?
-   * For the decoding use the `frenchCode' Huffman tree defined above.
+   * For the decoding use the `frenchCode` Huffman tree defined above.
    */
   val secret: List[Bit] = List(0,0,1,1,1,0,1,0,1,1,1,0,0,1,1,0,1,0,0,1,1,0,1,0,1,1,0,0,1,1,1,1,1,0,1,0,1,1,0,0,0,0,1,0,1,1,1,0,0,1,0,0,1,0,0,0,1,0,0,0,1,0,1)
 
@@ -235,7 +235,7 @@ object Huffman {
    * This function returns the bit sequence that represents the character `char` in
    * the code table `table`.
    */
-  def codeBits(table: CodeTable)(char: Char): List[Bit] = ???
+  def codeBits(table: CodeTable)(char: Char): List[Bit] = table.find(_._1 == char).head._2
 
   /**
    * Given a code tree, create a code table which contains, for every character in the
@@ -245,7 +245,12 @@ object Huffman {
    * a valid code tree that can be represented as a code table. Using the code tables of the
    * sub-trees, think of how to build the code table for the entire tree.
    */
-  def convert(tree: CodeTree): CodeTable = ???
+  def convert(tree: CodeTree): CodeTable = {
+    tree match {
+      case Fork() => ???
+      case Leaf() => ???
+    }
+  }
 
   /**
    * This function takes two code tables and merges them into one. Depending on how you
